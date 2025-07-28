@@ -26,6 +26,21 @@
  ┣ 📜makefile
  ┗ 📜README.md
 ```
+# Templates
+
+## initialproyect:
+**Description :** create a basic solution for golang
+**Usage :** 
+``` batch
+go run src/templates/initialproyect/main.go
+```
+![alt text](images/image.png)
+
+the output path you can find the files generated
+
+![alt text](images/image-1.png)
+
+
 # Create a new template
 ``` batch
 go run src/templates/templatebase/main.go TEMPLATENAME
