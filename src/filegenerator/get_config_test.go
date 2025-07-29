@@ -39,7 +39,12 @@ func TestGetConfig(t *testing.T) {
 func TestGetConfig_ErrorJSON(t *testing.T) {
 	tmpDir := "tmpdirTestGetConfig_ErrorJSON"
 	tmpFile := filepath.Join(tmpDir, "bad.json")
-	os.WriteFile(tmpFile, []byte("{invalid json}"), 0644)
+	if err := os.MkdirAll(tmpDir, 0755); err != nil {
+		t.Fatal(err.Error())
+	}
+	if err := os.WriteFile(tmpFile, []byte("{invalid json}"), 0644); err != nil {
+		t.Fatal(err.Error())
+	}
 
 	var cfg TestConfig
 	err := getConfig(tmpFile, &cfg)

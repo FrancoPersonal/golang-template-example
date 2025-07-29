@@ -2,9 +2,14 @@ package filegenerator
 
 import (
 	"encoding/json"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"testing"
+)
+
+var (
+	logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 )
 
 func CreateFiles(t *testing.T, root string) []struct {
@@ -44,7 +49,9 @@ func createTestTemplateFile(t *testing.T, content string, path string) {
 
 func createJSONFile(t *testing.T, content any, path string) {
 	jsonData, _ := json.Marshal(content)
-	os.MkdirAll(filepath.Dir(path), 0755)
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		logger.Warn(err.Error())
+	}
 	err := os.WriteFile(path, jsonData, 0644)
 	if err != nil {
 		t.Fatalf("Error writing JSON file: %v", err)
