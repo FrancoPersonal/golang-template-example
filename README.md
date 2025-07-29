@@ -4,7 +4,7 @@
 
 [![golang-template-example release (latest SemVer)](https://img.shields.io/github/v/release/FrancoPersonal/golang-template-example?sort=semver)](https://github.com/FrancoPersonal/golang-template-example/releases)
 [![Go Reference](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/FrancoPersonal/golang-template-example/v74/github)
-[![Test Status](https://github.com/FrancoPersonal/golang-template-example/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/FrancoPersonal/golang-template-example/actions/workflows/tests.yml)
+[![Test Status](https://github.com/FrancoPersonal/golang-template-example/blob/main/.github/workflows/test.yml/badge.svg?branch=master)](https://github.com/FrancoPersonal/golang-template-example/blob/main/.github/workflows/test.yml)
 [![Test Coverage](https://codecov.io/gh/FrancoPersonal/golang-template-example/branch/master/graph/badge.svg)](https://codecov.io/gh/FrancoPersonal/golang-template-example)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/796/badge)](https://bestpractices.coreinfrastructure.org/projects/796)
 
