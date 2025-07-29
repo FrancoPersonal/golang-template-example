@@ -16,7 +16,7 @@ clean:
 
 # Ejecuta las pruebas y muestra cobertura en la terminal
 test:
-	go test -v -coverprofile=$(COVERAGE_FILE) ./...
+	go test ./... -cover -v -coverprofile=$(COVERAGE_FILE)
 
 # Genera archivo HTML con detalles de cobertura
 coverage: test
