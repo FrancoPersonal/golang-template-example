@@ -36,3 +36,6 @@ showcoverage: coverage
 		powershell.exe -Command "Start-Process '$(COVERAGE_HTML)'" || \
 		echo "Abre el archivo $(COVERAGE_HTML) manualmente"; \
 	fi
+
+makecoveragefile:
+	./coverage.sh
