@@ -55,7 +55,9 @@ func (service FileGenerator) GenerateFiles() error {
 		return err
 	}
 	for _, file := range files {
-		service.GenerateFile(file)
+		if err := service.GenerateFile(file); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -68,7 +70,9 @@ func (service FileGenerator) GenerateFile(templateFile TemplateFile) error {
 		return err
 	}
 	dirPath := filepath.Dir(templateFile.Destination)
-	os.MkdirAll(dirPath, 0755)
+	if err := os.MkdirAll(dirPath, 0755); err != nil {
+		log.Println(err.Error())
+	}
 	outFile, err := os.Create(templateFile.Destination)
 	if err != nil {
 		log.Println("Error creating file:", err)
