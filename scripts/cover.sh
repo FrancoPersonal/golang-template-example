@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ..
-COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
+COVERAGE=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
  echo $COVERAGE
 COLOR="orange"
 if (( $(echo "$COVERAGE <= 50" | bc -l) )); then COLOR="red"; elif (( $(echo "$COVERAGE > 80" | bc -l) )); then COLOR="green"; fi
