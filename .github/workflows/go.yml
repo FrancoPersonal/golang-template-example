@@ -29,9 +29,9 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        go test ./... -coverprofile=coverage.out -covermode=atomic
-        go tool cover -func=coverage.out -o coverage.txt
-        go tool cover -html=coverage.out -o coverage.html
+        go test ./... -coverprofile=cover.out -covermode=atomic
+        go tool cover -func=cover.out -o cover.txt
+        go tool cover -html=cover.out -o cover.html
     - name: Generate Coverage Badge
       run: |
         COVERAGE=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
