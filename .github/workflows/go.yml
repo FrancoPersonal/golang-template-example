@@ -33,6 +33,16 @@ jobs:
         go test $(go list ./... | grep -v  'src/templates') -coverprofile=cover.out
         go tool cover -func=cover.out -o cover.txt
         go tool cover -html=cover.out -o cover.html
+    - name: Check if coverage is at least 80%
+      run: |
+        total=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
+        echo "Total coverage: $total%"
+        threshold=80.0
+        result=$(echo "$total >= $threshold" | bc)
+        if [ "$result" -ne 1 ]; then
+          echo "Coverage below threshold ($threshold%)"
+          exit 1
+        fi            
     - name: Generate Coverage Badge
       run: |
           COVERAGE=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')

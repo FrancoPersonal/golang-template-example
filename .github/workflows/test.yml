@@ -2,9 +2,9 @@
 
     on:
       push:
-        branches: [ main, develop ]
+        branches: [ develop ]
       pull_request:
-        branches: [ main, develop ]
+        branches: [ develop ]
 
     jobs:
       test:
@@ -22,7 +22,8 @@
 
           - name: Run tests with coverage
             run: |
-              go test ./... -cover -v -coverprofile=cover.out        
+              go test ./... -cover -v -coverprofile=cover.out
+              go test $(go list ./... | grep -v  'src/templates') -coverprofile=cover.out
               go tool cover -func=cover.out -o cover.txt
               go tool cover -html=cover.out -o cover.html
 
