@@ -58,6 +58,16 @@ func createJSONFile(t *testing.T, content any, path string) {
 	}
 }
 
+func createPlainFile(t *testing.T, content string, path string) {
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		logger.Warn(err.Error())
+	}
+	err := os.WriteFile(path, []byte(content), 0644)
+	if err != nil {
+		t.Fatalf("Error writing JSON file: %v", err)
+	}
+}
+
 func createFile(t *testing.T, path string) map[string]string {
 	data := map[string]string{
 		"key": "value",

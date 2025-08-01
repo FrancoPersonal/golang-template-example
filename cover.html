@@ -57,6 +57,12 @@
 				
 				<option value="file0">github.com/FrancoPersonal/golang-template-example/src/filegenerator/generator.go (84.4%)</option>
 				
+				<option value="file1">github.com/FrancoPersonal/golang-template-example/src/templates/initialproyect/main.go (0.0%)</option>
+				
+				<option value="file2">github.com/FrancoPersonal/golang-template-example/src/templates/templateBase/files/main.go (0.0%)</option>
+				
+				<option value="file3">github.com/FrancoPersonal/golang-template-example/src/templates/templateBase/main.go (0.0%)</option>
+				
 				</select>
 			</div>
 			<div id="legend">
@@ -211,6 +217,108 @@ func contains(slice []string, value string) bool <span class="cov8" title="1">{
                 }</span>
         }
         <span class="cov8" title="1">return false</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "github.com/FrancoPersonal/golang-template-example/src/filegenerator"
+)
+
+type Project struct {
+        Name             string `json:"name"`
+        GithubRepository string `json:"githubRepository"`
+        Description      string `json:"descripttion"`
+}
+
+const (
+        TemplatePath    = "src\\templates\\initialproyect\\"
+        DestinationPath = "output"
+)
+
+func main() <span class="cov0" title="0">{
+        config := &amp;Project{}
+        exeptions := []string{
+                "src\\templates\\initialproyect\\files\\.github\\workflows\\release.yml",
+        }
+        generator, err := filegenerator.New(TemplatePath, DestinationPath, config, exeptions)
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov0" title="0">err = generator.GenerateFiles()
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+import (
+        "github.com/FrancoPersonal/golang-template-example/src/filegenerator"
+)
+
+type Template struct {
+        Name             string `json:"name"`
+        GithubRepository string `json:"githubRepository"`
+        Description      string `json:"descripttion"`
+}
+
+const (
+        TemplatePath    = "src\\templates\\{{.Name}}\\"
+        DestinationPath = "output"
+)
+
+func main() <span class="cov0" title="0">{
+        config := &amp;Template{}
+        exeptions := []string{}
+        generator, err := filegenerator.New(TemplatePath, DestinationPath, config, exeptions)
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov0" title="0">err = generator.GenerateFiles()
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package main
+
+import (
+        "fmt"
+        "os"
+
+        "github.com/FrancoPersonal/golang-template-example/src/filegenerator"
+)
+
+type Template struct {
+        Name string `json:"name"`
+}
+
+const (
+        TemplatePath = "src\\templates\\templatebase\\"
+)
+
+func main() <span class="cov0" title="0">{
+        if len(os.Args) &lt; 2 </span><span class="cov0" title="0">{
+                fmt.Println("missing templatename")
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">templatename := os.Args[1]
+        fmt.Println(templatename)
+        destinationPath := "src\\templates\\" + templatename
+
+        config := &amp;Template{templatename}
+        exeptions := []string{}
+        generator := filegenerator.NewFromStruct(TemplatePath, destinationPath, config, exeptions)
+        err := generator.GenerateFiles()
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov0" title="0">filePath := destinationPath + "\\files\\empyfile.txt"
+        os.Remove(filePath)</span>
 }
 </pre>
 		

@@ -60,7 +60,7 @@ func TestGenerateFiles_Errors(t *testing.T) {
 }
 
 func TestGenerateFile_Exception(t *testing.T) {
-	tmpDir := "tmpdirTestGenerateFile"
+	tmpDir := "tmpdirTestGenerateFile_ex"
 	srcPath := filepath.Join(tmpDir, "plain.txt")
 	dstPath := filepath.Join(tmpDir, "out.txt")
 	content := "Raw text content"
@@ -69,7 +69,7 @@ func TestGenerateFile_Exception(t *testing.T) {
 		Original:    srcPath,
 		Destination: dstPath,
 	}
-
+	createPlainFile(t, content, srcPath)
 	gen := FileGenerator{
 		config:       mockConfig{},
 		templatePath: tmpDir,
@@ -86,9 +86,10 @@ func TestGenerateFile_Exception(t *testing.T) {
 	if string(output) != content {
 		t.Fatalf("Expected copied content, got: %s", string(output))
 	}
+	os.RemoveAll(tmpDir)
 }
 func TestGenerateFiles(t *testing.T) {
-	tmpDir := "tmpdirTestGenerateFile"
+	tmpDir := "tmpdirTestGenerateFiles"
 	srcPath := filepath.Join(tmpDir, "plain.txt")
 	dstPath := filepath.Join(tmpDir, "out.txt")
 
@@ -96,7 +97,7 @@ func TestGenerateFiles(t *testing.T) {
 		Original:    srcPath,
 		Destination: dstPath,
 	}
-
+	createFile(t, srcPath)
 	gen := FileGenerator{
 		config:       mockConfig{},
 		templatePath: tmpDir,
@@ -107,5 +108,5 @@ func TestGenerateFiles(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GenerateFile with exception failed: %v", err)
 	}
-
+	os.RemoveAll(tmpDir)
 }
