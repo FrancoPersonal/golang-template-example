@@ -20,12 +20,15 @@
           - name: Download Go modules
             run: go mod tidy
 
-          - name: Run tests
-            run: go test -v ./...
+          - name: Run tests with coverage
+            run: |
+              go test ./... -cover -v -coverprofile=cover.out        
+              go tool cover -func=cover.out -o cover.txt
+              go tool cover -html=cover.out -o cover.html
 
           - name: Check if coverage is at least 80%
             run: |
-              total=$(go tool cover -func=coverage/cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
+              total=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
               echo "Total coverage: $total%"
               threshold=80.0
               result=$(echo "$total >= $threshold" | bc)
