@@ -17,7 +17,10 @@ const (
 
 func main() {
 	config := &Project{}
-	generator, err := filegenerator.New(TemplatePath, DestinationPath, config)
+	exeptions := []string{
+		"src\\templates\\initialproyect\\files\\.github\\workflows\\release.yml",
+	}
+	generator, err := filegenerator.New(TemplatePath, DestinationPath, config, exeptions)
 	if err != nil {
 		return
 	}

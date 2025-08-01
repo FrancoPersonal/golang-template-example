@@ -25,7 +25,8 @@ func main() {
 	destinationPath := "src\\templates\\" + templatename
 
 	config := &Template{templatename}
-	generator := filegenerator.NewFromStruct(TemplatePath, destinationPath, config)
+	exeptions := []string{}
+	generator := filegenerator.NewFromStruct(TemplatePath, destinationPath, config, exeptions)
 	err := generator.GenerateFiles()
 	if err != nil {
 		return

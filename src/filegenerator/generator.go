@@ -3,6 +3,7 @@ package filegenerator
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/fs"
 	"log"
 	"os"
@@ -19,6 +20,7 @@ type FileGenerator struct {
 	config       any
 	templatePath string
 	outputFolder string
+	exeptions    []string
 }
 
 type TemplateFile struct {
@@ -26,14 +28,14 @@ type TemplateFile struct {
 	Destination string
 }
 
-func New(templatePath string, outputFolder string, v any) (IFileGenerator, error) {
+func New(templatePath string, outputFolder string, v any, exeptions []string) (IFileGenerator, error) {
 	jsonTemplate := templatePath + "\\" + "templatejson.json"
 	err := getConfig(jsonTemplate, v)
-	return FileGenerator{v, templatePath, outputFolder}, err
+	return FileGenerator{v, templatePath, outputFolder, exeptions}, err
 }
 
-func NewFromStruct(templatePath string, outputFolder string, v any) IFileGenerator {
-	return FileGenerator{v, templatePath, outputFolder}
+func NewFromStruct(templatePath string, outputFolder string, v any, exeptions []string) IFileGenerator {
+	return FileGenerator{v, templatePath, outputFolder, exeptions}
 }
 
 func getConfig(jsonTemplate string, v any) error {
@@ -59,16 +61,14 @@ func (service FileGenerator) GenerateFiles() error {
 			return err
 		}
 	}
+	log.Println("Total files Generated:", len(files))
 	return nil
 }
 
 func (service FileGenerator) GenerateFile(templateFile TemplateFile) error {
 	// Abrir la plantilla del Makefile
-	tmpl, err := template.ParseFiles(templateFile.Original)
-	if err != nil {
-		log.Println("Error loading template:", err)
-		return err
-	}
+	log.Println("initial GenerateFile", templateFile.Original)
+
 	dirPath := filepath.Dir(templateFile.Destination)
 	if err := os.MkdirAll(dirPath, 0755); err != nil {
 		log.Println(err.Error())
@@ -79,6 +79,27 @@ func (service FileGenerator) GenerateFile(templateFile TemplateFile) error {
 		return err
 	}
 	defer outFile.Close()
+
+	if contains(service.exeptions, templateFile.Original) {
+		sourceFile, err := os.Open(templateFile.Original)
+		if err != nil {
+			return err
+		}
+		defer sourceFile.Close()
+
+		_, err = io.Copy(outFile, sourceFile)
+		if err != nil {
+			return err
+		}
+		log.Println("file generated successfully", templateFile.Destination)
+		return nil
+	}
+
+	tmpl, err := template.ParseFiles(templateFile.Original)
+	if err != nil {
+		log.Println("Error loading template:", err)
+		return err
+	}
 
 	// Ejecutar la plantilla con los datos
 	if err := tmpl.Execute(outFile, service.config); err != nil {
@@ -110,4 +131,13 @@ func getFilePathsRecursive(root string, destinationPath string) ([]TemplateFile,
 	}
 
 	return filePaths, nil
+}
+
+func contains(slice []string, value string) bool {
+	for _, item := range slice {
+		if item == value {
+			return true
+		}
+	}
+	return false
 }

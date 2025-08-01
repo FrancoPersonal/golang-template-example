@@ -2,26 +2,22 @@ COVERAGE_FILE=cover.out
 COVERAGE_HTML=cover.html
 
 init:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	go install github.com/goreleaser/goreleaser@latest
-	go mod init github.com/FrancoPersonal/golang-template-example	
+	go mod init github.com/FrancoPersonal/my-awesome-project
 	go mod tidy
 
-newtemplate:
-	go run src/templates/templatebase/main.go templatenew
+build:
+	go build -o bin/my-awesome-project .
+
+run: build
+	./bin/my-awesome-project
 
 # Limpia archivos generados
 clean:
-	rm -r go.mod
 	rm -f $(COVERAGE_FILE) $(COVERAGE_HTML)
-	rm -r output/*
 
 # Ejecuta las pruebas y muestra cobertura en la terminal
 test:
-	go test ./... -cover -v -coverprofile=$(COVERAGE_FILE)
-
-cover:
-	./scripts/cover.sh
+	go test -v -coverprofile=$(COVERAGE_FILE) ./...
 
 # Genera archivo HTML con detalles de cobertura
 coverage: test
@@ -29,7 +25,7 @@ coverage: test
 	@echo "Reporte generado: $(COVERAGE_HTML)"
 
 # Ejecuta pruebas, cobertura y abre el HTML (Linux, macOS, Windows)
-showcoverage: coverage
+open: coverage
 	@# Abrir archivo HTML con el visor predeterminado según el sistema operativo
 	@if command -v xdg-open >/dev/null; then \
 		xdg-open $(COVERAGE_HTML); \
@@ -41,9 +37,3 @@ showcoverage: coverage
 		powershell.exe -Command "Start-Process '$(COVERAGE_HTML)'" || \
 		echo "Abre el archivo $(COVERAGE_HTML) manualmente"; \
 	fi
-
-makecoveragefile:
-	./coverage.sh
-
-initialproyect:
-	go run src/templates/initialproyect/main.go
