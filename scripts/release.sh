@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd ..
 set -e
 
 if [ -z "$1" ]; then

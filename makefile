@@ -1,5 +1,5 @@
-COVERAGE_FILE=coverage.out
-COVERAGE_HTML=coverage.html
+COVERAGE_FILE=cover.out
+COVERAGE_HTML=cover.html
 
 init:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
