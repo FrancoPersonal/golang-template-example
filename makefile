@@ -3,6 +3,7 @@ COVERAGE_HTML=cover.html
 
 init:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/goreleaser/goreleaser@latest
 	go mod init github.com/FrancoPersonal/golang-template-example	
 	go mod tidy
 
@@ -18,6 +19,9 @@ clean:
 # Ejecuta las pruebas y muestra cobertura en la terminal
 test:
 	go test ./... -cover -v -coverprofile=$(COVERAGE_FILE)
+
+cover:
+	./scripts/cover.sh
 
 # Genera archivo HTML con detalles de cobertura
 coverage: test
@@ -40,3 +44,6 @@ showcoverage: coverage
 
 makecoveragefile:
 	./coverage.sh
+
+initialproyect:
+	go run src/templates/initialproyect/main.go

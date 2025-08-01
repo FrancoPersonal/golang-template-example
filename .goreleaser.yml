@@ -2,7 +2,7 @@ project_name: golang-template-example
 
 builds:
   - id: default
-    main: ./main.go
+    main: src/templates/initialproyect/main.go
     goos:
       - linux
       - windows

@@ -55,13 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/FrancoPersonal/golang-template-example/src/filegenerator/generator.go (84.8%)</option>
-				
-				<option value="file1">github.com/FrancoPersonal/golang-template-example/src/templates/initialproyect/main.go (0.0%)</option>
-				
-				<option value="file2">github.com/FrancoPersonal/golang-template-example/src/templates/templateBase/files/main.go (0.0%)</option>
-				
-				<option value="file3">github.com/FrancoPersonal/golang-template-example/src/templates/templateBase/main.go (0.0%)</option>
+				<option value="file0">github.com/FrancoPersonal/golang-template-example/src/filegenerator/generator.go (84.4%)</option>
 				
 				</select>
 			</div>
@@ -80,6 +74,7 @@
 import (
         "encoding/json"
         "fmt"
+        "io"
         "io/fs"
         "log"
         "os"
@@ -96,6 +91,7 @@ type FileGenerator struct {
         config       any
         templatePath string
         outputFolder string
+        exeptions    []string
 }
 
 type TemplateFile struct {
@@ -103,14 +99,14 @@ type TemplateFile struct {
         Destination string
 }
 
-func New(templatePath string, outputFolder string, v any) (IFileGenerator, error) <span class="cov8" title="1">{
+func New(templatePath string, outputFolder string, v any, exeptions []string) (IFileGenerator, error) <span class="cov8" title="1">{
         jsonTemplate := templatePath + "\\" + "templatejson.json"
         err := getConfig(jsonTemplate, v)
-        return FileGenerator{v, templatePath, outputFolder}, err
+        return FileGenerator{v, templatePath, outputFolder, exeptions}, err
 }</span>
 
-func NewFromStruct(templatePath string, outputFolder string, v any) IFileGenerator <span class="cov8" title="1">{
-        return FileGenerator{v, templatePath, outputFolder}
+func NewFromStruct(templatePath string, outputFolder string, v any, exeptions []string) IFileGenerator <span class="cov8" title="1">{
+        return FileGenerator{v, templatePath, outputFolder, exeptions}
 }</span>
 
 func getConfig(jsonTemplate string, v any) error <span class="cov8" title="1">{
@@ -132,34 +128,57 @@ func (service FileGenerator) GenerateFiles() error <span class="cov8" title="1">
                 return err
         }</span>
         <span class="cov0" title="0">for _, file := range files </span><span class="cov0" title="0">{
-                service.GenerateFile(file)
-        }</span>
-        <span class="cov0" title="0">return nil</span>
+                if err := service.GenerateFile(file); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+        }
+        <span class="cov0" title="0">log.Println("Total files Generated:", len(files))
+        return nil</span>
 }
 
 func (service FileGenerator) GenerateFile(templateFile TemplateFile) error <span class="cov8" title="1">{
         // Abrir la plantilla del Makefile
-        tmpl, err := template.ParseFiles(templateFile.Original)
-        if err != nil </span><span class="cov8" title="1">{
-                log.Println("Error loading template:", err)
-                return err
+        log.Println("initial GenerateFile", templateFile.Original)
+
+        dirPath := filepath.Dir(templateFile.Destination)
+        if err := os.MkdirAll(dirPath, 0755); err != nil </span><span class="cov0" title="0">{
+                log.Println(err.Error())
         }</span>
-        <span class="cov8" title="1">dirPath := filepath.Dir(templateFile.Destination)
-        os.MkdirAll(dirPath, 0755)
-        outFile, err := os.Create(templateFile.Destination)
+        <span class="cov8" title="1">outFile, err := os.Create(templateFile.Destination)
         if err != nil </span><span class="cov0" title="0">{
                 log.Println("Error creating file:", err)
                 return err
         }</span>
         <span class="cov8" title="1">defer outFile.Close()
 
+        if contains(service.exeptions, templateFile.Original) </span><span class="cov8" title="1">{
+                sourceFile, err := os.Open(templateFile.Original)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">defer sourceFile.Close()
+
+                _, err = io.Copy(outFile, sourceFile)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">log.Println("file generated successfully", templateFile.Destination)
+                return nil</span>
+        }
+
+        <span class="cov8" title="1">tmpl, err := template.ParseFiles(templateFile.Original)
+        if err != nil </span><span class="cov8" title="1">{
+                log.Println("Error loading template:", err)
+                return err
+        }</span>
+
         // Ejecutar la plantilla con los datos
-        if err := tmpl.Execute(outFile, service.config); err != nil </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if err := tmpl.Execute(outFile, service.config); err != nil </span><span class="cov8" title="1">{
                 log.Println("Error writing Makefile:", err)
                 return err
         }</span>
 
-        <span class="cov0" title="0">log.Println("file generated successfully", templateFile.Destination)
+        <span class="cov8" title="1">log.Println("file generated successfully", templateFile.Destination)
         return nil</span>
 }
 
@@ -184,102 +203,14 @@ func getFilePathsRecursive(root string, destinationPath string) ([]TemplateFile,
 
         <span class="cov8" title="1">return filePaths, nil</span>
 }
-</pre>
-		
-		<pre class="file" id="file1" style="display: none">package main
 
-import (
-        "github.com/FrancoPersonal/golang-template-example/src/filegenerator"
-)
-
-type Project struct {
-        Name             string `json:"name"`
-        GithubRepository string `json:"githubRepository"`
-        Description      string `json:"descripttion"`
-}
-
-const (
-        TemplatePath    = "src\\templates\\initialproyect\\"
-        DestinationPath = "output"
-)
-
-func main() <span class="cov0" title="0">{
-        config := &amp;Project{}
-        generator, err := filegenerator.New(TemplatePath, DestinationPath, config)
-        if err != nil </span><span class="cov0" title="0">{
-                return
-        }</span>
-        <span class="cov0" title="0">err = generator.GenerateFiles()
-        if err != nil </span><span class="cov0" title="0">{
-                return
-        }</span>
-}
-</pre>
-		
-		<pre class="file" id="file2" style="display: none">package main
-
-import (
-        "github.com/FrancoPersonal/golang-template-example/src/filegenerator"
-)
-
-type Template struct {
-        Name             string `json:"name"`
-        GithubRepository string `json:"githubRepository"`
-        Description      string `json:"descripttion"`
-}
-
-const (
-        TemplatePath    = "src\\templates\\{{.Name}}\\"
-        DestinationPath = "output"
-)
-
-func main() <span class="cov0" title="0">{
-        config := &amp;Template{}
-        generator, err := filegenerator.New(TemplatePath, DestinationPath, config)
-        if err != nil </span><span class="cov0" title="0">{
-                return
-        }</span>
-        <span class="cov0" title="0">err = generator.GenerateFiles()
-        if err != nil </span><span class="cov0" title="0">{
-                return
-        }</span>
-}
-</pre>
-		
-		<pre class="file" id="file3" style="display: none">package main
-
-import (
-        "fmt"
-        "os"
-
-        "github.com/FrancoPersonal/golang-template-example/src/filegenerator"
-)
-
-type Template struct {
-        Name string `json:"name"`
-}
-
-const (
-        TemplatePath = "src\\templates\\templatebase\\"
-)
-
-func main() <span class="cov0" title="0">{
-        if len(os.Args) &lt; 2 </span><span class="cov0" title="0">{
-                fmt.Println("missing templatename")
-                os.Exit(1)
-        }</span>
-        <span class="cov0" title="0">templatename := os.Args[1]
-        fmt.Println(templatename)
-        destinationPath := "src\\templates\\" + templatename
-
-        config := &amp;Template{templatename}
-        generator := filegenerator.NewFromStruct(TemplatePath, destinationPath, config)
-        err := generator.GenerateFiles()
-        if err != nil </span><span class="cov0" title="0">{
-                return
-        }</span>
-        <span class="cov0" title="0">filePath := destinationPath + "\\files\\empyfile.txt"
-        os.Remove(filePath)</span>
+func contains(slice []string, value string) bool <span class="cov8" title="1">{
+        for _, item := range slice </span><span class="cov8" title="1">{
+                if item == value </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
 }
 </pre>
 		

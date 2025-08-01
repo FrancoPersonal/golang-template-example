@@ -10,6 +10,9 @@ import (
 type TestConfig struct {
 	Name string
 }
+type mockConfig struct {
+	Name string
+}
 
 func TestGenerateFile_Errors(t *testing.T) {
 	fg := FileGenerator{config: TestConfig{Name: "X"}}
@@ -54,4 +57,55 @@ func TestGenerateFiles_Errors(t *testing.T) {
 	}
 	// Clean up
 	os.RemoveAll(tmpDir)
+}
+
+func TestGenerateFile_Exception(t *testing.T) {
+	tmpDir := "tmpdirTestGenerateFile"
+	srcPath := filepath.Join(tmpDir, "plain.txt")
+	dstPath := filepath.Join(tmpDir, "out.txt")
+	content := "Raw text content"
+
+	tmpl := TemplateFile{
+		Original:    srcPath,
+		Destination: dstPath,
+	}
+
+	gen := FileGenerator{
+		config:       mockConfig{},
+		templatePath: tmpDir,
+		outputFolder: tmpDir,
+		exeptions:    []string{srcPath},
+	}
+
+	err := gen.GenerateFile(tmpl)
+	if err != nil {
+		t.Fatalf("GenerateFile with exception failed: %v", err)
+	}
+
+	output, _ := os.ReadFile(dstPath)
+	if string(output) != content {
+		t.Fatalf("Expected copied content, got: %s", string(output))
+	}
+}
+func TestGenerateFiles(t *testing.T) {
+	tmpDir := "tmpdirTestGenerateFile"
+	srcPath := filepath.Join(tmpDir, "plain.txt")
+	dstPath := filepath.Join(tmpDir, "out.txt")
+
+	tmpl := TemplateFile{
+		Original:    srcPath,
+		Destination: dstPath,
+	}
+
+	gen := FileGenerator{
+		config:       mockConfig{},
+		templatePath: tmpDir,
+		outputFolder: tmpDir,
+	}
+
+	err := gen.GenerateFile(tmpl)
+	if err != nil {
+		t.Fatalf("GenerateFile with exception failed: %v", err)
+	}
+
 }

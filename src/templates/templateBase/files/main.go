@@ -17,7 +17,8 @@ const (
 
 func main() {
 	config := &Template{}
-	generator, err := filegenerator.New(TemplatePath, DestinationPath, config)
+	exeptions := []string{}
+	generator, err := filegenerator.New(TemplatePath, DestinationPath, config, exeptions)
 	if err != nil {
 		return
 	}
