@@ -1,11 +1,8 @@
 # golang-template-example
 
-[Repository](https://github.com/FrancoPersonal/golang-template-example)
-
 [![golang-template-example release (latest SemVer)](https://img.shields.io/github/v/release/FrancoPersonal/golang-template-example?sort=semver)](https://github.com/FrancoPersonal/golang-template-example/releases)
-[![Go Reference](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/FrancoPersonal/golang-template-example/v74/github)
+[![Go Reference](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://github.com/FrancoPersonal/golang-template-exampl)
 [![Test Coverage](images/badge.svg)](cover.html)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/796/badge)](https://bestpractices.coreinfrastructure.org/projects/796)
 
 # Directory
 ``` 
