@@ -31,6 +31,7 @@
 # Templates
 
 ## initialproyect:
+
 **Description :** create a basic solution for golang
 **Usage :** 
 ``` batch
