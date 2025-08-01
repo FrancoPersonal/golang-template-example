@@ -19,6 +19,9 @@ clean:
 test:
 	go test ./... -cover -v -coverprofile=$(COVERAGE_FILE)
 
+cover:
+	./scripts/cover.sh
+
 # Genera archivo HTML con detalles de cobertura
 coverage: test
 	go tool cover -html=$(COVERAGE_FILE) -o $(COVERAGE_HTML)
