@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/FrancoPersonal/golang-template-example/src/filegenerator/generator.go (81.2%)</option>
+				<option value="file0">github.com/FrancoPersonal/golang-template-example/src/filegenerator/generator.go (84.4%)</option>
 				
 				<option value="file1">github.com/FrancoPersonal/golang-template-example/src/templates/initialproyect/main.go (0.0%)</option>
 				
@@ -80,6 +80,7 @@
 import (
         "encoding/json"
         "fmt"
+        "io"
         "io/fs"
         "log"
         "os"
@@ -137,17 +138,15 @@ func (service FileGenerator) GenerateFiles() error <span class="cov8" title="1">
                         return err
                 }</span>
         }
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov0" title="0">log.Println("Total files Generated:", len(files))
+        return nil</span>
 }
 
 func (service FileGenerator) GenerateFile(templateFile TemplateFile) error <span class="cov8" title="1">{
         // Abrir la plantilla del Makefile
-        tmpl, err := template.ParseFiles(templateFile.Original)
-        if err != nil </span><span class="cov8" title="1">{
-                log.Println("Error loading template:", err)
-                return err
-        }</span>
-        <span class="cov8" title="1">dirPath := filepath.Dir(templateFile.Destination)
+        log.Println("initial GenerateFile", templateFile.Original)
+
+        dirPath := filepath.Dir(templateFile.Destination)
         if err := os.MkdirAll(dirPath, 0755); err != nil </span><span class="cov0" title="0">{
                 log.Println(err.Error())
         }</span>
@@ -158,13 +157,34 @@ func (service FileGenerator) GenerateFile(templateFile TemplateFile) error <span
         }</span>
         <span class="cov8" title="1">defer outFile.Close()
 
+        if contains(service.exeptions, templateFile.Original) </span><span class="cov8" title="1">{
+                sourceFile, err := os.Open(templateFile.Original)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">defer sourceFile.Close()
+
+                _, err = io.Copy(outFile, sourceFile)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">log.Println("file generated successfully", templateFile.Destination)
+                return nil</span>
+        }
+
+        <span class="cov8" title="1">tmpl, err := template.ParseFiles(templateFile.Original)
+        if err != nil </span><span class="cov8" title="1">{
+                log.Println("Error loading template:", err)
+                return err
+        }</span>
+
         // Ejecutar la plantilla con los datos
-        if err := tmpl.Execute(outFile, service.config); err != nil </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if err := tmpl.Execute(outFile, service.config); err != nil </span><span class="cov8" title="1">{
                 log.Println("Error writing Makefile:", err)
                 return err
         }</span>
 
-        <span class="cov0" title="0">log.Println("file generated successfully", templateFile.Destination)
+        <span class="cov8" title="1">log.Println("file generated successfully", templateFile.Destination)
         return nil</span>
 }
 
@@ -189,6 +209,15 @@ func getFilePathsRecursive(root string, destinationPath string) ([]TemplateFile,
 
         <span class="cov8" title="1">return filePaths, nil</span>
 }
+
+func contains(slice []string, value string) bool <span class="cov8" title="1">{
+        for _, item := range slice </span><span class="cov8" title="1">{
+                if item == value </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
 </pre>
 		
 		<pre class="file" id="file1" style="display: none">package main
@@ -210,7 +239,9 @@ const (
 
 func main() <span class="cov0" title="0">{
         config := &amp;Project{}
-        exeptions := []string{}
+        exeptions := []string{
+                "src\\templates\\initialproyect\\files\\.github\\workflows\\release.yml",
+        }
         generator, err := filegenerator.New(TemplatePath, DestinationPath, config, exeptions)
         if err != nil </span><span class="cov0" title="0">{
                 return
