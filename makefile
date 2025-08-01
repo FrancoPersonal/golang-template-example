@@ -3,6 +3,7 @@ COVERAGE_HTML=cover.html
 
 init:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/goreleaser/goreleaser@latest
 	go mod init github.com/FrancoPersonal/golang-template-example	
 	go mod tidy
 
