@@ -32,16 +32,6 @@ jobs:
         go test ./... -coverprofile=coverage.out -covermode=atomic
         go tool cover -func=coverage.out -o coverage.txt
         go tool cover -html=coverage.out -o coverage.html
-
-    - name: Publish badge to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
-        publish_branch: gh-pages
-        keep_files: true
-        destination_dir: .
-
     - name: Generate Coverage Badge
       uses: ncruces/go-coverage-badge@v0.3.0
       with:
@@ -52,6 +42,16 @@ jobs:
       with:
         name: coverage-badge
         path: coverage.svg
+    - name: Publish badge to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .
+        publish_branch: gh-pages
+        keep_files: true
+        destination_dir: .
+
+
    
     - name: Check if coverage is at least 80%
       run: |
