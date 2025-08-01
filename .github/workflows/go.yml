@@ -32,6 +32,7 @@ jobs:
         go test ./... -coverprofile=coverage.out -covermode=atomic
         go tool cover -func=coverage.out -o coverage.txt
         go tool cover -html=coverage.out -o coverage.html
+
     - name: Publish badge to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
@@ -39,7 +40,8 @@ jobs:
         publish_dir: .
         publish_branch: gh-pages
         keep_files: true
-        destination_dir: .        
+        destination_dir: .
+
     - name: Generate Coverage Badge
       uses: ncruces/go-coverage-badge@v0.3.0
       with:
