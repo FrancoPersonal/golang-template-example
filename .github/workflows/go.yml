@@ -33,15 +33,25 @@ jobs:
         go tool cover -func=coverage.out -o coverage.txt
         go tool cover -html=coverage.out -o coverage.html
     - name: Generate Coverage Badge
-      uses: ncruces/go-coverage-badge@v0.3.0
-      with:
-        coverage-file: coverage.out
-        badge-file: coverage.svg
-    - name: Upload badge
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-badge
-        path: coverage.svg
+      run: |
+        COVERAGE=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
+        echo $COVERAGE
+        COLOR="orange"
+        if (( $(echo "$COVERAGE <= 50" | bc -l) )); then COLOR="red"; elif (( $(echo "$COVERAGE > 80" | bc -l) )); then COLOR="green"; fi
+        echo COLOR
+        curl "https://img.shields.io/badge/coverage-$COVERAGE%25-$COLOR" > images/badge.svg
+
+    - name: Commit badge
+      run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git pull origin main
+          mkdir -p badges
+          mv badge.svg images/coverage.svg
+          git add images/coverage.svg
+          git commit -m "chore: update coverage badge" || echo "No changes to commit"
+          git push origin main
+
     - name: Publish badge to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
