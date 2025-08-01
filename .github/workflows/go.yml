@@ -29,7 +29,8 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        go test $(go list ./... | grep -v  'src/templates') -coverprofile=coverage.out     
+        go test ./... -cover -v -coverprofile=cover.out
+        go test $(go list ./... | grep -v  'src/templates') -coverprofile=cover.out
         go tool cover -func=cover.out -o cover.txt
         go tool cover -html=cover.out -o cover.html
     - name: Generate Coverage Badge
@@ -42,7 +43,7 @@ jobs:
           curl "https://img.shields.io/badge/coverage-$COVERAGE%25-$COLOR" > images/badge.svg
           ls
 
-    - name: Commit badge and coverage
+    - name: Commit badge and cover.html
       run: |
           ls
           git config --global user.name 'github-actions'
